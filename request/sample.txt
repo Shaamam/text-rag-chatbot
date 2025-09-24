@@ -1,0 +1,53 @@
+Sample Document for Testing
+
+This is a sample text document that can be used for testing the TextRAG API endpoints.
+
+Introduction
+============
+
+This document contains information about various topics that can be used to test the RAG (Retrieval-Augmented Generation) functionality.
+
+Key Features
+============
+
+The system supports the following document formats:
+- PDF files (.pdf)
+- Word documents (.docx)
+- Plain text files (.txt)
+
+The document processing service will:
+1. Extract text content from uploaded files
+2. Split content on double newlines
+3. Remove empty chunks
+4. Store processed chunks in a vector database for retrieval
+
+Usage Instructions
+==================
+
+To use the system:
+
+1. Upload your documents using the /upload endpoint
+2. Wait for processing to complete
+3. Ask questions using the /chat endpoint
+4. The system will find relevant information and provide answers
+
+Technical Details
+=================
+
+The system uses:
+- Spring Boot for the web framework
+- PostgreSQL with pgvector for vector storage
+- Vertex AI for embeddings and chat completions
+- Apache PDFBox for PDF processing
+- Apache POI for Word document processing
+
+Troubleshooting
+===============
+
+If you encounter issues:
+- Check that PostgreSQL is running
+- Verify your Google Cloud credentials are configured
+- Ensure the vector database table exists
+- Check the application logs for detailed error messages
+
+This concludes the sample document content.
