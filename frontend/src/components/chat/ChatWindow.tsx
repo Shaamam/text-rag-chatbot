@@ -49,7 +49,7 @@ export const ChatWindow: React.FC = () => {
 
             console.log('Sending chat request:', requestPayload);
 
-            const response = await chatApi.post('/', requestPayload);
+            const response = await chatApi.post('', requestPayload);
 
             console.log('Received chat response:', response.data);
 
