@@ -13,9 +13,4 @@ public class TextragApplication {
         SpringApplication.run(TextragApplication.class, args);
     }
 
-    @Bean
-    ChatMemory chatMemory() {
-        return MessageWindowChatMemory.builder().build();
-    }
-
 }

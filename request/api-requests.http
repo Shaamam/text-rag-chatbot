@@ -2,121 +2,63 @@
 ### Base URL: http://localhost:8080
 
 ###
-# Health Check (if actuator is enabled)
-GET http://localhost:8080/actuator/health
-Accept: application/json
-
-###
-# 1. Process Document - Returns processed chunks without storing
-POST http://localhost:8080/api/v1/rag/documents/process
-Content-Type: multipart/form-data; boundary=boundary
-
---boundary
-Content-Disposition: form-data; name="doc"; filename="velocity_motors_employee_handbook_20pages.pdf"
-Content-Type: application/pdf
-
-< /Users/shaama/Documents/openai-mcp-demo/textrag/src/main/resources/pdf/velocity_motors_employee_handbook_20pages.pdf
---boundary--
-
-###
-# 2. Process Document - Text file example
-POST http://localhost:8080/api/v1/rag/documents/process
-Content-Type: multipart/form-data; boundary=boundary
-
---boundary
-Content-Disposition: form-data; name="doc"; filename="sample.txt"
-Content-Type: text/plain
-
-< ./sample.txt
---boundary--
-
-###
-# 3. Process Document - Word document example
-POST http://localhost:8080/api/v1/rag/documents/process
-Content-Type: multipart/form-data; boundary=boundary
-
---boundary
-Content-Disposition: form-data; name="doc"; filename="sample.docx"
-Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document
-
-< ./sample.docx
---boundary--
-
-###
-# 4. Upload Document - Processes and stores in vector store
+# 1. Upload Document - Processes and stores in vector store
 POST http://localhost:8080/api/v1/rag/documents/upload
 Content-Type: multipart/form-data; boundary=boundary
 
 --boundary
-Content-Disposition: form-data; name="doc"; filename="velocity_motors_employee_handbook_20pages.pdf"
+Content-Disposition: form-data; name="doc"; filename="velocity_motors_guide.docx.pdf"
 Content-Type: application/pdf
 
-< /Users/shaama/Documents/openai-mcp-demo/textrag/src/main/resources/pdf/velocity_motors_employee_handbook_20pages.pdf
+< /Users/shaama/Documents/openai-mcp-demo/text-rag-chatbot/src/main/resources/pdf/velocity_motors_guide.pdf
 --boundary--
 
 ###
-# 5. Upload Text Document - Example
-POST http://localhost:8080/api/v1/rag/documents/upload
-Content-Type: multipart/form-data; boundary=boundary
-
---boundary
-Content-Disposition: form-data; name="doc"; filename="faq.txt"
-Content-Type: text/plain
-
-< ./faq.txt
---boundary--
-
-###
-# 6. Chat - Ask questions about uploaded documents
+# 2. Chat - Ask questions about uploaded documents
 POST http://localhost:8080/api/v1/chat
 Content-Type: application/json
 Accept: application/json
 
 {
-  "sessionId": "session-123",
   "Question": "What are the working hours for Velocity Motors employees?"
 }
 
 ###
-# 7. Chat - Follow-up question in same session
+# 3. Chat - What is the policy on overtime pay
 POST http://localhost:8080/api/v1/chat
 Content-Type: application/json
 Accept: application/json
 
 {
-  "sessionId": "session-123",
-  "Question": "Can you provide more details about that?"
+  "Question": "What is the policy on overtime pay?"
 }
 
 ###
-# 8. Chat - New session example
+# 4. Chat - New session example
 POST http://localhost:8080/api/v1/chat
 Content-Type: application/json
 Accept: application/json
 
 {
-  "sessionId": "session-456",
   "Question": "What are the employee benefits mentioned in the Velocity Motors handbook?"
 }
 
 ###
-# 9. Chat - HR Policy question example
+# 5. Chat - What is the policy for parental leave?
 POST http://localhost:8080/api/v1/chat
 Content-Type: application/json
 Accept: application/json
 
 {
-  "sessionId": "session-789",
-  "Question": "What is the vacation policy for new employees at Velocity Motors?"
+  "Question": "What is the policy for parental leave?"
 }
 
 ###
-# 10. Chat - General inquiry
+# 6. Chat - To Check Hallucination
 POST http://localhost:8080/api/v1/chat
 Content-Type: application/json
 Accept: application/json
 
 {
-  "sessionId": "session-abc",
-  "Question": "What should a new employee know about Velocity Motors company culture?"
+  "Question": "Who is the CEO of Google?"
 }

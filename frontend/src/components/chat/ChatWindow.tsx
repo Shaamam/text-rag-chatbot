@@ -43,8 +43,7 @@ export const ChatWindow: React.FC = () => {
         try {
             // Ensure we're sending the exact format expected by the backend
             const requestPayload = {
-                sessionId: sessionId,
-                Question: userMessage  // Capital Q as expected by ChatRequest record
+                Question: userMessage
             };
 
             console.log('Sending chat request:', requestPayload);
@@ -205,7 +204,7 @@ export const ChatWindow: React.FC = () => {
                     </button>
                 </div>
                 <div className="mt-2 text-xs text-gray-500 font-light text-center">
-                    Upload documents and ask questions about their content • Session: {sessionId}
+                    Upload documents and ask questions about their content
                 </div>
             </form>
 

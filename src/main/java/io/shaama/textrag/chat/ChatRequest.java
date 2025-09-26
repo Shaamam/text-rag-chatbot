@@ -1,4 +1,4 @@
 package io.shaama.textrag.chat;
 
-public record ChatRequest(String sessionId, String Question) {
+public record ChatRequest(String Question) {
 }
