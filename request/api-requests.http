@@ -10,7 +10,7 @@ Content-Type: multipart/form-data; boundary=boundary
 Content-Disposition: form-data; name="doc"; filename="velocity_motors_guide.docx.pdf"
 Content-Type: application/pdf
 
-< /Users/shaama/Documents/openai-mcp-demo/text-rag-chatbot/src/main/resources/pdf/velocity_motors_guide.pdf
+< /Users/shaama/Documents/spring-ai/text-rag-chatbot/src/main/resources/pdf/velocity_motors_guide.pdf
 --boundary--
 
 ###

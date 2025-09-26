@@ -26,28 +26,6 @@ public class DocumentController {
 
     private final VectorStoreService vectorStoreService;
 
-    @PostMapping(value = "/process", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(
-            summary = "Process document for RAG",
-            description = "Uploads and processes a PDF (.pdf), Word document (.docx), or text file by splitting content on double newlines and removing empty fields"
-    )
-    public ResponseEntity<List<String>> processDocument(
-            @Parameter(description = "PDF (.pdf), Word document (.docx), or text file to process", required = true)
-            @RequestParam("doc") MultipartFile doc
-    ) {
-        log.info("Processing document: {}", doc.getOriginalFilename());
-
-        try {
-            List<String> processedChunks = documentProcessingService.processDocument(doc);
-            log.info("Successfully processed document into {} chunks", processedChunks.size());
-
-            return ResponseEntity.ok(processedChunks);
-        } catch (Exception e) {
-            log.error("Error processing document: {}", e.getMessage(), e);
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(
             summary = "Process document for RAG",
