@@ -48,7 +48,7 @@ public class ChatService {
                 "4. Provide concise but comprehensive responses " +
                 "5. Ask clarifying questions if the user's query is ambiguous " +
                 "Always be helpful, accurate, and maintain a professional tone." +
-                        "Dont give result in markdown only answer in TEXT format")
+                        "**Strictly** Dont give result in markdown only answer in PLAIN-TEXT format")
                 .user(question)
                 .advisors(a -> a.param(CONVERSATION_ID, sessionId))
                 .advisors(qaAdvisor)
