@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * embedding generation, and similarity search with detailed logging.
  */
 @SpringBootTest
-public class VectorStoreIntegrationTestSimple {
+public class VectorStoreIntegrationTest {
 
     @Autowired
     private DocumentProcessingService documentProcessingService;
