@@ -25,7 +25,7 @@ repositories {
 }
 
 ext {
-    set('springAiVersion', "1.0.2")
+    set('springAiVersion', "1.0.0")
 }
 
 dependencies {
@@ -34,7 +34,6 @@ dependencies {
     implementation 'org.springframework.ai:spring-ai-starter-model-vertex-ai-embedding'
     implementation 'org.springframework.ai:spring-ai-starter-model-vertex-ai-gemini'
     implementation 'org.springframework.ai:spring-ai-starter-vector-store-pgvector'
-    implementation 'org.springframework.ai:spring-ai-rag'
 
     //Document processing - Apache POI for Word documents
     implementation 'org.apache.poi:poi:5.3.0'

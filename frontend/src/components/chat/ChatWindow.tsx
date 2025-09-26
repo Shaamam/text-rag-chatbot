@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import {chatApi} from "../../axiosClient";
-import { DocumentUpload } from './DocumentUpload';
+import { chatApi } from "../../axiosClient";
+import { UploadModal } from './UploadModal';
 
 interface Message {
     text: string;
@@ -15,7 +15,7 @@ export const ChatWindow: React.FC = () => {
     const [isTyping, setIsTyping] = useState<boolean>(false);
     const [apiError, setApiError] = useState<string | null>(null);
     const [sessionId, setSessionId] = useState<string>(() => `session-${Date.now()}`);
-    const [showUpload, setShowUpload] = useState<boolean>(true);
+    const [isUploadModalOpen, setIsUploadModalOpen] = useState<boolean>(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -41,18 +41,30 @@ export const ChatWindow: React.FC = () => {
         setApiError(null);
 
         try {
-            const response = await chatApi.post('/', { 
-                sessionId: sessionId,
-                Question: userMessage 
-            });
+            // Ensure we're sending the exact format expected by the backend
+            const requestPayload = {
+                Question: userMessage
+            };
 
-            // API returns a response with answer field
+            console.log('Sending chat request:', requestPayload);
+
+            const response = await chatApi.post('', requestPayload);
+
+            console.log('Received chat response:', response.data);
+
+            // API returns ChatResponse with sessionId, question, and answer
             const botResponse = response.data.answer;
 
-            setMessages(prev => [...prev, { text: botResponse, sender: "bot" }]);
-        } catch (error) {
+            if (botResponse) {
+                setMessages(prev => [...prev, { text: botResponse, sender: "bot" }]);
+            } else {
+                throw new Error('No answer received from API');
+            }
+        } catch (error: any) {
             console.error('Error sending message to API:', error);
-            setMessages(prev => [...prev, { text: 'Sorry, I encountered an error. Please try again later.', sender: "bot" }]);
+            const errorMessage = error.response?.data?.message || error.message || 'Sorry, I encountered an error. Please try again later.';
+            setMessages(prev => [...prev, { text: errorMessage, sender: "bot" }]);
+            setApiError(errorMessage);
         } finally {
             setIsTyping(false);
         }
@@ -86,7 +98,7 @@ export const ChatWindow: React.FC = () => {
     // Handle document upload success
     const handleUploadSuccess = (message: string): void => {
         setMessages(prev => [...prev, { text: message, sender: "bot" }]);
-        setShowUpload(false); // Hide upload area after first successful upload
+        setIsUploadModalOpen(false); // Close modal after successful upload
     };
 
     // Handle document upload error
@@ -94,9 +106,9 @@ export const ChatWindow: React.FC = () => {
         setMessages(prev => [...prev, { text: error, sender: "bot" }]);
     };
 
-    // Toggle upload area visibility
-    const toggleUpload = (): void => {
-        setShowUpload(!showUpload);
+    // Toggle upload modal visibility
+    const toggleUploadModal = (): void => {
+        setIsUploadModalOpen(!isUploadModalOpen);
     };
 
     return (
@@ -112,9 +124,9 @@ export const ChatWindow: React.FC = () => {
                     </div>
                     <div className="ml-auto flex items-center space-x-3">
                         <button
-                            onClick={toggleUpload}
+                            onClick={toggleUploadModal}
                             className="text-white hover:text-gray-200 transition-colors"
-                            title="Toggle document upload"
+                            title="Upload document"
                         >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -128,14 +140,6 @@ export const ChatWindow: React.FC = () => {
             {/* Chat messages */}
             <div className="flex-1 bg-gray-100 p-4 overflow-y-auto">
                 <div className="space-y-4">
-                    {/* Document Upload Area */}
-                    {showUpload && (
-                        <DocumentUpload
-                            onUploadSuccess={handleUploadSuccess}
-                            onUploadError={handleUploadError}
-                        />
-                    )}
-
                     {messages.map((message, index) => (
                         <div
                             key={index}
@@ -200,19 +204,17 @@ export const ChatWindow: React.FC = () => {
                     </button>
                 </div>
                 <div className="mt-2 text-xs text-gray-500 font-light text-center">
-                    Upload documents and ask questions about their content • Session: {sessionId}
+                    Upload documents and ask questions about their content
                 </div>
             </form>
 
-            {/* Document upload area - initially visible */}
-            {showUpload && (
-                <div className="bg-white p-4 border-t border-gray-200 rounded-b-lg shadow-inner">
-                    <DocumentUpload 
-                        onUploadSuccess={handleUploadSuccess} 
-                        onUploadError={handleUploadError} 
-                    />
-                </div>
-            )}
+            {/* Upload Modal */}
+            <UploadModal
+                isOpen={isUploadModalOpen}
+                onClose={() => setIsUploadModalOpen(false)}
+                onUploadSuccess={handleUploadSuccess}
+                onUploadError={handleUploadError}
+            />
         </div>
     );
 };
