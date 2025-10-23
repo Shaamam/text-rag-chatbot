@@ -1,0 +1,11 @@
+product_id,product_name,category,price,stock_quantity,supplier
+P001,iPhone 15 Pro,Electronics,999.99,50,Apple Inc
+P002,Samsung Galaxy S24,Electronics,899.99,75,Samsung
+P003,MacBook Pro 16,Computers,2499.99,25,Apple Inc
+P004,Dell XPS 13,Computers,1299.99,40,Dell Technologies
+P005,Sony WH-1000XM5,Audio,399.99,100,Sony Corporation
+P006,Bose QuietComfort 45,Audio,329.99,80,Bose Corporation
+P007,iPad Air,Tablets,599.99,60,Apple Inc
+P008,Surface Pro 9,Tablets,1199.99,30,Microsoft
+P009,AirPods Pro 2nd Gen,Audio,249.99,120,Apple Inc
+P010,Google Pixel 8,Electronics,699.99,45,Google LLC

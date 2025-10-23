@@ -1,10 +1,18 @@
 import React, { useState, useRef } from 'react';
 import { documentApi } from '../../axiosClient';
 
+interface ProcessedDocument {
+    fileName: string;
+    fileType: string;
+    chunks: string[];
+    metadata: { [key: string]: any };
+    totalChunks: number;
+}
+
 interface UploadModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onUploadSuccess: (message: string) => void;
+    onUploadSuccess: (documents: ProcessedDocument[]) => void;
     onUploadError: (error: string) => void;
 }
 
@@ -20,12 +28,16 @@ export const UploadModal: React.FC<UploadModalProps> = ({
 
     if (!isOpen) return null;
 
-    const handleFileUpload = async (file: File): Promise<void> => {
+    const handleFileUpload = async (files: FileList): Promise<void> => {
         setIsUploading(true);
 
         try {
             const formData = new FormData();
-            formData.append('doc', file);
+            
+            // Add all files to form data
+            Array.from(files).forEach(file => {
+                formData.append('docs', file);
+            });
 
             const response = await documentApi.post('/upload', formData, {
                 headers: {
@@ -33,11 +45,13 @@ export const UploadModal: React.FC<UploadModalProps> = ({
                 }
             });
 
-            onUploadSuccess(`Document "${file.name}" uploaded successfully! ${response.data}`);
+            const processedDocs: ProcessedDocument[] = response.data;
+            onUploadSuccess(processedDocs);
             onClose();
         } catch (error: any) {
-            console.error('Error uploading document:', error);
-            const errorMessage = error.response?.data?.message || `Failed to upload "${file.name}". Please try again.`;
+            console.error('Error uploading documents:', error);
+            const fileNames = Array.from(files).map(f => f.name).join(', ');
+            const errorMessage = error.response?.data?.message || `Failed to upload "${fileNames}". Please try again.`;
             onUploadError(errorMessage);
         } finally {
             setIsUploading(false);
@@ -46,10 +60,10 @@ export const UploadModal: React.FC<UploadModalProps> = ({
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>): void => {
         const files = e.target.files;
-        if (files && files[0]) {
-            handleFileUpload(files[0]);
+        if (files && files.length > 0) {
+            handleFileUpload(files);
         }
-        // Clear the input so the same file can be selected again
+        // Clear the input so the same files can be selected again
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
         }
@@ -70,8 +84,8 @@ export const UploadModal: React.FC<UploadModalProps> = ({
         setDragActive(false);
 
         const files = e.dataTransfer.files;
-        if (files && files[0]) {
-            handleFileUpload(files[0]);
+        if (files && files.length > 0) {
+            handleFileUpload(files);
         }
     };
 
@@ -126,16 +140,17 @@ export const UploadModal: React.FC<UploadModalProps> = ({
                     <input
                         ref={fileInputRef}
                         type="file"
-                        accept=".pdf,.docx,.txt"
+                        accept=".pdf,.docx,.txt,.csv,.xlsx,.xls"
                         onChange={handleFileSelect}
                         className="hidden"
                         disabled={isUploading}
+                        multiple
                     />
 
                     {isUploading ? (
                         <div className="flex flex-col items-center">
                             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-                            <p className="text-lg text-gray-600 mb-2">Uploading and processing document...</p>
+                            <p className="text-lg text-gray-600 mb-2">Uploading and processing documents...</p>
                             <p className="text-sm text-gray-500">Please wait, this may take a few moments</p>
                         </div>
                     ) : (
@@ -154,13 +169,16 @@ export const UploadModal: React.FC<UploadModalProps> = ({
                                 />
                             </svg>
                             <h3 className="text-lg font-medium text-gray-700 mb-2">
-                                Choose a file or drag it here
+                                Choose files or drag them here
                             </h3>
                             <p className="text-sm text-gray-500 mb-2">
-                                Supported formats: PDF, Word documents, Text files
+                                Supported formats: PDF, Word, Text, CSV, Excel (.xlsx/.xls)
                             </p>
-                            <p className="text-xs text-gray-400">
-                                Maximum file size: 10MB
+                            <p className="text-xs text-gray-400 mb-1">
+                                Maximum file size: 10MB per file
+                            </p>
+                            <p className="text-xs text-gray-500">
+                                <strong>Chunking:</strong> TXT/PDF/Word: paragraphs | CSV/Excel: rows with headers
                             </p>
                         </div>
                     )}

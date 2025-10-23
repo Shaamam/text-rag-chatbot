@@ -35,10 +35,13 @@ dependencies {
     implementation 'org.springframework.ai:spring-ai-starter-model-vertex-ai-gemini'
     implementation 'org.springframework.ai:spring-ai-starter-vector-store-pgvector'
 
-    //Document processing - Apache POI for Word documents
+    //Document processing - Apache POI for Word and Excel documents
     implementation 'org.apache.poi:poi:5.3.0'
     implementation 'org.apache.poi:poi-ooxml:5.3.0'
     implementation 'org.apache.poi:poi-scratchpad:5.3.0'
+    
+    //CSV processing
+    implementation 'com.opencsv:opencsv:5.9'
     
     //PDF processing - Apache PDFBox for PDF documents
     implementation 'org.apache.pdfbox:pdfbox:2.0.29'

@@ -1,0 +1,39 @@
+Spring Boot Application Development Guide
+
+Spring Boot is a powerful framework that simplifies the development of production-ready Spring applications. It provides auto-configuration, embedded servers, and a wide range of starter dependencies.
+
+Getting Started with Spring Boot
+
+To create a new Spring Boot application, you can use Spring Initializr or your favorite IDE. The framework follows the convention-over-configuration principle, reducing the amount of boilerplate code required.
+
+Spring Boot provides several key features including auto-configuration, standalone applications, embedded servers, production-ready features, and no code generation or XML configuration requirements.
+
+Dependency Injection and Inversion of Control
+
+Spring Boot leverages the core Spring framework's dependency injection capabilities. The IoC container manages object creation and dependency resolution, promoting loose coupling and testability.
+
+Common annotations include @Component, @Service, @Repository, and @Controller for marking classes as Spring-managed beans. @Autowired enables automatic dependency injection.
+
+Building REST APIs
+
+Spring Boot makes it easy to build RESTful web services using Spring MVC. The @RestController annotation combines @Controller and @ResponseBody, simplifying REST endpoint creation.
+
+Key annotations for REST development include @GetMapping, @PostMapping, @PutMapping, @DeleteMapping, and @PathVariable for URL parameters.
+
+Data Access with Spring Data JPA
+
+Spring Data JPA provides a simplified approach to data access. By extending JpaRepository, you can perform CRUD operations without writing implementation code.
+
+Entity classes are marked with @Entity, and relationships are defined using annotations like @OneToMany, @ManyToOne, and @ManyToMany.
+
+Testing in Spring Boot
+
+Spring Boot provides excellent testing support with @SpringBootTest for integration tests and @WebMvcTest for testing web layers. MockMvc allows testing of REST endpoints without starting a full HTTP server.
+
+Security with Spring Security
+
+Spring Security integration provides authentication and authorization capabilities. It can be configured using Java configuration or properties files, supporting various authentication mechanisms including JWT, OAuth2, and basic authentication.
+
+Monitoring and Actuator
+
+Spring Boot Actuator provides production-ready features including health checks, metrics, and application information endpoints. These help monitor and manage applications in production environments.

@@ -2,63 +2,178 @@
 ### Base URL: http://localhost:8080
 
 ###
-# 1. Upload Document - Processes and stores in vector store
+# 1. Upload Multiple Documents - Processes and stores multiple files in vector store
 POST http://localhost:8080/api/v1/rag/documents/upload
 Content-Type: multipart/form-data; boundary=boundary
 
 --boundary
-Content-Disposition: form-data; name="doc"; filename="velocity_motors_guide.docx.pdf"
-Content-Type: application/pdf
+Content-Disposition: form-data; name="docs"; filename="employees.csv"
+Content-Type: text/csv
 
-< /Users/shaama/Documents/spring-ai/text-rag-chatbot/src/main/resources/pdf/velocity_motors_guide.pdf
+< ./Users/shaama/Documents/openai-mcp-demo/text-rag-chatbot/src/main/resources/csv/employees.csv
+--boundary
+Content-Disposition: form-data; name="docs"; filename="ai_overview.txt"
+Content-Type: text/plain
+
+< ./Users/shaama/Documents/openai-mcp-demo/text-rag-chatbot/src/main/resources/txt/ai_overview.txt
 --boundary--
 
 ###
-# 2. Chat - Ask questions about uploaded documents
+# 2. Upload Single PDF Document
+POST http://localhost:8080/api/v1/rag/documents/upload-single
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="doc"; filename="velocity_motors_guide.pdf"
+Content-Type: application/pdf
+
+< ./src/main/resources/pdf/velocity_motors_guide.pdf
+--boundary--
+
+###
+# 3. Upload CSV File with Employee Data
+POST http://localhost:8080/api/v1/rag/documents/upload-single
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="doc"; filename="employees.csv"
+Content-Type: text/csv
+
+< ./src/main/resources/csv/employees.csv
+--boundary--
+
+###
+# 4. Upload Products CSV File
+POST http://localhost:8080/api/v1/rag/documents/upload-single
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="doc"; filename="products.csv"
+Content-Type: text/csv
+
+< ./src/main/resources/csv/products.csv
+--boundary--
+
+###
+# 5. Upload Text File - AI Overview
+POST http://localhost:8080/api/v1/rag/documents/upload-single
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="doc"; filename="ai_overview.txt"
+Content-Type: text/plain
+
+< ./src/main/resources/txt/ai_overview.txt
+--boundary--
+
+###
+# 6. Upload Text File - Spring Boot Guide
+POST http://localhost:8080/api/v1/rag/documents/upload-single
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="doc"; filename="spring_boot_guide.txt"
+Content-Type: text/plain
+
+< ./src/main/resources/txt/spring_boot_guide.txt
+--boundary--
+
+###
+# 7. Chat - Ask about employee data from CSV
 POST http://localhost:8080/api/v1/chat
 Content-Type: application/json
 Accept: application/json
 
 {
-  "Question": "What are the working hours for Velocity Motors employees?"
+  "Question": "What is the average salary of employees in the dataset? Which city has the highest paid employees?"
 }
 
 ###
-# 3. Chat - What is the policy on overtime pay
+# 8. Chat - Ask about products from CSV
 POST http://localhost:8080/api/v1/chat
 Content-Type: application/json
 Accept: application/json
 
 {
-  "Question": "What is the policy on overtime pay?"
+  "Question": "What products are available from Apple Inc and what are their prices?"
 }
 
 ###
-# 4. Chat - New session example
+# 9. Chat - Ask about AI concepts from text file
 POST http://localhost:8080/api/v1/chat
 Content-Type: application/json
 Accept: application/json
 
 {
-  "Question": "What are the employee benefits mentioned in the Velocity Motors handbook?"
+  "Question": "What are the three main types of machine learning mentioned in the AI overview?"
 }
 
 ###
-# 5. Chat - What is the policy for parental leave?
+# 10. Chat - Ask about Spring Boot from text file
 POST http://localhost:8080/api/v1/chat
 Content-Type: application/json
 Accept: application/json
 
 {
-  "Question": "What is the policy for parental leave?"
+  "Question": "What are the key features of Spring Boot mentioned in the guide?"
 }
 
 ###
-# 6. Chat - To Check Hallucination
+# 11. Chat - Cross-document question (if PDF is also uploaded)
+POST http://localhost:8080/api/v1/chat
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Question": "What are the working hours for Velocity Motors employees and how does that compare to the Spring Boot development practices?"
+}
+
+###
+# 12. Chat - Ask about CSV headers and structure
+POST http://localhost:8080/api/v1/chat
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Question": "What information is stored about each employee in the dataset? List all the fields."
+}
+
+###
+# 13. Chat - Data analysis question
+POST http://localhost:8080/api/v1/chat
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Question": "Which profession has the highest average salary based on the employee data?"
+}
+
+###
+# 14. Chat - Technology comparison
+POST http://localhost:8080/api/v1/chat
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Question": "Compare the machine learning approaches mentioned in the AI overview with Spring Boot's auto-configuration features."
+}
+
+###
+# 15. Chat - Test hallucination prevention
 POST http://localhost:8080/api/v1/chat
 Content-Type: application/json
 Accept: application/json
 
 {
   "Question": "Who is the CEO of Google?"
+}
+
+###
+# 16. Chat - Product inventory question
+POST http://localhost:8080/api/v1/chat
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Question": "Which products have the lowest stock quantity and need to be restocked?"
 }

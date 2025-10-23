@@ -7,6 +7,14 @@ interface Message {
     sender: 'user' | 'bot';
 }
 
+interface ProcessedDocument {
+    fileName: string;
+    fileType: string;
+    chunks: string[];
+    metadata: { [key: string]: any };
+    totalChunks: number;
+}
+
 export const ChatWindow: React.FC = () => {
     const [messages, setMessages] = useState<Message[]>([
         { text: "Welcome to TextRAG! Upload documents to get started, then ask questions about their content.", sender: "bot" },
@@ -96,7 +104,10 @@ export const ChatWindow: React.FC = () => {
     };
 
     // Handle document upload success
-    const handleUploadSuccess = (message: string): void => {
+    const handleUploadSuccess = (documents: ProcessedDocument[]): void => {
+        const docNames = documents.map(doc => doc.fileName).join(', ');
+        const totalChunks = documents.reduce((sum, doc) => sum + doc.totalChunks, 0);
+        const message = `Successfully uploaded ${documents.length} document(s): ${docNames}. Total chunks processed: ${totalChunks}`;
         setMessages(prev => [...prev, { text: message, sender: "bot" }]);
         setIsUploadModalOpen(false); // Close modal after successful upload
     };

@@ -1,5 +1,6 @@
 package io.shaama.textrag.rag;
 
+import io.shaama.textrag.rag.model.ProcessedDocument;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -7,12 +8,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -23,26 +22,59 @@ import java.util.List;
 public class DocumentController {
 
     private final DocumentProcessingService documentProcessingService;
-
     private final VectorStoreService vectorStoreService;
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(
-            summary = "Process document for RAG",
-            description = "Uploads and processes a PDF (.pdf), Word document (.docx), or text file by splitting content on double newlines and removing empty fields"
+            summary = "Process documents for RAG",
+            description = "Uploads and processes documents (PDF .pdf, Word .docx, Text .txt, CSV .csv, Excel .xlsx/.xls) with appropriate chunking strategies"
     )
-    public ResponseEntity<String> uploadDocument(
-            @Parameter(description = "PDF (.pdf), Word document (.docx), or text file to process", required = true)
-            @RequestParam("doc") MultipartFile doc
+    public ResponseEntity<List<ProcessedDocument>> uploadDocuments(
+            @Parameter(description = "Documents to process (PDF, Word, Text, CSV, Excel)", required = true)
+            @RequestParam("docs") List<MultipartFile> docs
     ) {
-        log.info("Processing document: {}", doc.getOriginalFilename());
+        log.info("Processing {} documents", docs.size());
 
         try {
-            List<String> processedChunks = documentProcessingService.processDocument(doc);
-            log.info("Successfully processed document into {} chunks", processedChunks.size());
-            String responseMessage = vectorStoreService.addToVectorStore(processedChunks);
+            List<ProcessedDocument> processedDocuments = new ArrayList<>();
 
-            return ResponseEntity.ok(responseMessage);
+            for (MultipartFile doc : docs) {
+                if (!doc.isEmpty()) {
+                    ProcessedDocument processedDoc = documentProcessingService.processDocument(doc);
+                    String result = vectorStoreService.addToVectorStore(processedDoc);
+                    
+                    log.info("Processed document: {} - {}", doc.getOriginalFilename(), result);
+                    processedDocuments.add(processedDoc);
+                }
+            }
+
+            log.info("Successfully processed {} documents", processedDocuments.size());
+            return ResponseEntity.ok(processedDocuments);
+            
+        } catch (Exception e) {
+            log.error("Error processing documents: {}", e.getMessage(), e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping(value = "/upload-single", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(
+            summary = "Process single document for RAG",
+            description = "Uploads and processes a single document (PDF .pdf, Word .docx, Text .txt, CSV .csv, Excel .xlsx/.xls)"
+    )
+    public ResponseEntity<ProcessedDocument> uploadSingleDocument(
+            @Parameter(description = "Document to process", required = true)
+            @RequestParam("doc") MultipartFile doc
+    ) {
+        log.info("Processing single document: {}", doc.getOriginalFilename());
+
+        try {
+            ProcessedDocument processedDoc = documentProcessingService.processDocument(doc);
+            String result = vectorStoreService.addToVectorStore(processedDoc);
+            
+            log.info("Successfully processed document: {} - {}", doc.getOriginalFilename(), result);
+            return ResponseEntity.ok(processedDoc);
+            
         } catch (Exception e) {
             log.error("Error processing document: {}", e.getMessage(), e);
             return ResponseEntity.internalServerError().build();
